@@ -1,0 +1,110 @@
+# Column masking policies implemented with SEP BIAC column mask expressions.
+# Expression syntax: "@column" is the masked column's value. Expressions must
+# preserve the column type (all target columns are varchar) and must be safe
+# for NULL, short, malformed and unicode input.
+#
+# NOTE: Trino repeat() returns an array, not a varchar - length-preserving
+# masks therefore use array_join(repeat('*', n), ''). All expressions below
+# were validated live against the cluster before being attached.
+
+expressions:
+
+  # ---- fraud analyst: partial masks (keep investigation-usable suffixes) ----
+  gov_demo_mask_nid_partial:
+    description: National ID - show last 4 digits only
+    expression: >-
+      CASE
+        WHEN "@column" IS NULL THEN NULL
+        WHEN length("@column") <= 4 THEN array_join(repeat('*', length("@column")), '')
+        ELSE array_join(repeat('*', length("@column") - 4), '') || substr("@column", -4)
+      END
+    example_out: '*********0123'
+
+  gov_demo_mask_mobile_partial:
+    description: Mobile number - show last 4 digits only
+    expression: >-
+      CASE
+        WHEN "@column" IS NULL THEN NULL
+        WHEN length("@column") <= 4 THEN array_join(repeat('*', length("@column")), '')
+        ELSE array_join(repeat('*', length("@column") - 4), '') || substr("@column", -4)
+      END
+    example_out: '******5678'
+
+  gov_demo_mask_email_partial:
+    description: Email - keep first character and full domain
+    expression: >-
+      CASE
+        WHEN "@column" IS NULL THEN NULL
+        WHEN strpos("@column", '@') > 1
+          THEN substr("@column", 1, 1) || '******' || substr("@column", strpos("@column", '@'))
+        ELSE 'hidden@example.com'
+      END
+    example_out: 'j******@example.com'
+
+  gov_demo_mask_name_partial:
+    description: Customer name - first name + first letter of family name
+    expression: >-
+      CASE
+        WHEN "@column" IS NULL THEN NULL
+        WHEN strpos("@column", ' ') > 0
+          THEN substr("@column", 1, strpos("@column", ' ') - 1)
+               || ' ' || substr("@column", strpos("@column", ' ') + 1, 1) || '******'
+        ELSE "@column" || ' ******'
+      END
+    example_out: 'Somchai P******'
+
+  # ---- business / regional analyst: strong masks -------------------------
+  gov_demo_mask_full_string:
+    description: Replace the whole value with asterisks of equal length
+    expression: >-
+      CASE WHEN "@column" IS NULL THEN NULL
+           ELSE array_join(repeat('*', length("@column")), '') END
+    example_out: '*************'
+
+  gov_demo_mask_mobile_full:
+    description: Fixed 10-star mask for phone numbers
+    expression: >-
+      CASE WHEN "@column" IS NULL THEN NULL ELSE '**********' END
+    example_out: '**********'
+
+  gov_demo_mask_email_full:
+    description: Constant placeholder email
+    expression: >-
+      CASE WHEN "@column" IS NULL THEN NULL ELSE 'hidden@example.com' END
+    example_out: 'hidden@example.com'
+
+  gov_demo_mask_name_full:
+    description: Constant placeholder for customer name
+    expression: >-
+      CASE WHEN "@column" IS NULL THEN NULL ELSE 'Protected Customer' END
+    example_out: 'Protected Customer'
+
+  gov_demo_mask_account_partial:
+    description: Account ID - show last 4 characters only
+    expression: >-
+      CASE
+        WHEN "@column" IS NULL THEN NULL
+        WHEN length("@column") <= 4 THEN array_join(repeat('*', length("@column")), '')
+        ELSE array_join(repeat('*', length("@column") - 4), '') || substr("@column", -4)
+      END
+    example_out: '************1234'
+
+# role -> column -> expression assignments (applied to the protected table)
+role_masks:
+  gov_fraud_analyst:
+    js_financial_ice.gov_demo.customer_transactions:
+      national_id: gov_demo_mask_nid_partial
+      mobile_number: gov_demo_mask_mobile_partial
+      email: gov_demo_mask_email_partial
+      customer_name: gov_demo_mask_name_partial
+
+  gov_thailand_analyst:
+    js_financial_ice.gov_demo.customer_transactions:
+      customer_name: gov_demo_mask_name_full
+      national_id: gov_demo_mask_full_string
+      mobile_number: gov_demo_mask_mobile_full
+      email: gov_demo_mask_email_full
+      account_id: gov_demo_mask_account_partial
+
+# gov_data_admin: no masks (verifies original values)
+# gov_business_analyst / gov_auditor: no SELECT on the protected table at all

@@ -1,0 +1,105 @@
+# Governance personas for the AIDP Data Governance Showcase.
+# Roles are Starburst Enterprise built-in access control (BIAC) roles.
+# Users/groups live in the AIDP Keycloak realm (ddae).
+
+demo_schema: gov_demo
+catalog: js_financial_ice
+protected_table: js_financial_ice.gov_demo.customer_transactions
+summary_view: js_financial_ice.gov_demo.payment_business_summary
+
+personas:
+
+  gov_data_admin:
+    purpose: >
+      Manage governance policies, access all demo data, verify original
+      values and review policy/audit information.
+    keycloak_group: governance-admins
+    keycloak_user: gov-admin
+    grants:
+      - entity: {catalog: js_financial_ice, schema: gov_demo}
+        actions: [SHOW, SELECT, INSERT, UPDATE, DELETE, CREATE, ALTER, DROP]
+        note: full control limited to the gov_demo schema
+      - entity: {category: ROLES, allEntities: true}
+        actions: [SHOW]
+        note: inspect role/policy configuration
+      - entity: {category: AUDIT_LOGS, allEntities: true}
+        actions: [SHOW]
+        note: review audit evidence
+      - entity: {category: COLUMN_MASK_EXPRESSIONS, allEntities: true}
+        actions: [SHOW, CREATE, ALTER, DROP]
+        note: manage masking policies
+      - entity: {category: ROW_FILTER_EXPRESSIONS, allEntities: true}
+        actions: [SHOW, CREATE, ALTER, DROP]
+        note: manage row-filter policies
+    row_filter: null
+    column_masks: {}          # unmasked access
+
+  gov_fraud_analyst:
+    purpose: >
+      Investigate fraud and high-risk payments using only the PII needed
+      for the investigation.
+    keycloak_group: fraud-analysts
+    keycloak_user: gov-fraud
+    grants:
+      - entity: {catalog: js_financial_ice, schema: gov_demo, table: customer_transactions}
+        actions: [SHOW, SELECT]
+        row_filter: gov_demo_fraud_only
+        column_masks:
+          national_id: gov_demo_mask_nid_partial
+          mobile_number: gov_demo_mask_mobile_partial
+          email: gov_demo_mask_email_partial
+          customer_name: gov_demo_mask_name_partial
+      - entity: {catalog: js_financial_ice, schema: gov_demo, table: payment_business_summary}
+        actions: [SHOW, SELECT]
+
+  gov_business_analyst:
+    purpose: >
+      Analyze payment trends through aggregated metrics without any
+      access to customer PII or fraud-investigation details.
+    keycloak_group: business-analysts
+    keycloak_user: gov-biz
+    grants:
+      - entity: {catalog: js_financial_ice, schema: gov_demo, table: payment_business_summary}
+        actions: [SHOW, SELECT]
+      # No grant on customer_transactions -> denied by absence of privilege.
+
+  gov_thailand_analyst:
+    purpose: >
+      Analyze Thailand records only; all customer PII masked.
+    keycloak_group: thailand-analysts
+    keycloak_user: gov-tha
+    grants:
+      - entity: {catalog: js_financial_ice, schema: gov_demo, table: customer_transactions}
+        actions: [SHOW, SELECT]
+        row_filter: gov_demo_thailand_only
+        column_masks:
+          customer_name: gov_demo_mask_name_full
+          national_id: gov_demo_mask_full_string
+          mobile_number: gov_demo_mask_mobile_full
+          email: gov_demo_mask_email_full
+          account_id: gov_demo_mask_account_partial
+      - entity: {catalog: js_financial_ice, schema: gov_demo, table: payment_business_summary}
+        actions: [SHOW, SELECT]
+        row_filter: gov_demo_thailand_only
+
+  gov_auditor:
+    purpose: >
+      Verify that governance controls exist and review audit evidence.
+      Metadata-only; no business data access.
+    keycloak_group: data-auditors
+    keycloak_user: gov-audit
+    grants:
+      - entity: {catalog: js_financial_ice, schema: gov_demo}
+        actions: [SHOW]
+        note: see object names/DDL only, no SELECT
+      - entity: {category: ROLES, allEntities: true}
+        actions: [SHOW]
+      - entity: {category: AUDIT_LOGS, allEntities: true}
+        actions: [SHOW]
+      - entity: {category: COLUMN_MASK_EXPRESSIONS, allEntities: true}
+        actions: [SHOW]
+      - entity: {category: ROW_FILTER_EXPRESSIONS, allEntities: true}
+        actions: [SHOW]
+      - entity: {category: QUERIES, allEntities: true}
+        actions: [SHOW]
+        note: view query history in Insights for audit review

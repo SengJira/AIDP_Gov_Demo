@@ -1,0 +1,56 @@
+# OpenMetadata enrichment plan for the governed demo assets.
+# Tags document sensitivity; they do NOT enforce access control.
+# Enforcement lives in AIDP/SEP BIAC - this distinction is part of the demo.
+
+service: js_aidp_starburst
+domain: FraudAndRisk
+owner_team: Fraud and Risk Team
+
+governance_description: >
+  Access to this dataset is controlled by AIDP roles. Sensitive customer
+  attributes are dynamically masked, and row visibility is restricted
+  according to each user's business responsibility.
+
+tags_to_ensure:
+  PII: {classification: PII, description: Personally identifiable information}
+  HighlySensitivePII: {classification: PII, description: Strongly identifying personal data (national ID)}
+  FinancialData: {classification: Financial, description: Account and monetary data}
+  Restricted: {classification: Governance, description: Restricted to authorized roles}
+  CustomerData: {classification: Governance, description: Customer attributes}
+  TransactionData: {classification: Governance, description: Payment transaction records}
+  FraudData: {classification: Governance, description: Fraud investigation data}
+  Governed: {classification: Governance, description: Dataset under AIDP governance controls}
+  DataProduct: {classification: Governance, description: Curated data product for consumers}
+
+table_enrichment:
+  js_financial_ice.gov_demo.customer_transactions:
+    description: >
+      Synthetic governed dataset joining customer identity attributes with
+      payment transaction details at one-row-per-transaction grain.
+      Used by the AIDP governance showcase to demonstrate role-based access,
+      dynamic column masking and row-level filtering. All values are
+      synthetic. Access is controlled by AIDP roles; PII columns are masked
+      per role and row visibility is filtered per business responsibility.
+      Intended consumers: fraud analysts (filtered + partial mask),
+      Thailand analysts (TH rows + full mask), governance admin (verify).
+    column_tags:
+      customer_name: [PII, CustomerData]
+      national_id: [HighlySensitivePII, CustomerData]
+      mobile_number: [PII, CustomerData]
+      email: [PII, CustomerData]
+      account_id: [FinancialData]
+      amount: [FinancialData]
+      risk_score: [Restricted, FraudData]
+      fraud_type: [Restricted, FraudData]
+      investigation_status: [Restricted, FraudData]
+      fraud_flag: [Restricted, FraudData]
+      transaction_id: [TransactionData]
+    table_tags: [Governed, Restricted, CustomerData, TransactionData, FraudData]
+
+  js_financial_ice.gov_demo.payment_business_summary:
+    description: >
+      Aggregated business metrics at country/date/channel/merchant-category
+      grain. Contains no direct personal information and is the approved
+      dataset for business analysts. Rows are derived from the governed
+      customer_transactions table; Thailand analysts see TH rows only.
+    table_tags: [Governed, DataProduct, TransactionData]

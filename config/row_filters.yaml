@@ -1,0 +1,54 @@
+# Row-level filtering policies implemented with SEP BIAC row filter
+# expressions.
+#
+# SEMANTICS (verified live against this SEP 479-e cluster): the expression
+# is a VISIBILITY condition - a row is returned when the expression
+# evaluates TRUE and hidden otherwise. NULL results are treated as hidden,
+# so a plain equality also excludes NULL-key rows correctly.
+#
+# Filters are attached to a role's table entity via
+# /api/v1/biac/roles/{roleId}/rowFilters and apply to every query the role
+# runs against that table - including queries without a WHERE clause,
+# subqueries, joins and UNIONs - because the filter is appended inside the
+# engine before the request reaches the connector.
+
+expressions:
+
+  gov_demo_fraud_only:
+    description: >
+      Fraud analyst visibility: only fraud-flagged or high-risk
+      (risk_score >= 0.70) transactions. COALESCE makes the expression
+      NULL-safe so rows with missing values stay hidden.
+    expression: >-
+      COALESCE(fraud_flag, false) OR COALESCE(risk_score, 0) >= 0.70
+    keeps: fraud_flag = true OR risk_score >= 0.70
+
+  gov_demo_thailand_only:
+    description: >
+      Thailand analyst visibility: only rows where country_code = 'TH'.
+      Rows with NULL country_code evaluate NULL -> hidden.
+    expression: >-
+      country_code = 'TH'
+    keeps: country_code = 'TH'
+
+  gov_demo_approved_only:
+    description: >
+      Business analyst detailed-record visibility (optional, only if
+      detailed access is ever granted): approved transactions only.
+    expression: >-
+      transaction_status = 'APPROVED'
+    keeps: transaction_status = 'APPROVED'
+
+# role -> table -> expression assignments
+role_filters:
+  gov_fraud_analyst:
+    js_financial_ice.gov_demo.customer_transactions: gov_demo_fraud_only
+
+  gov_thailand_analyst:
+    js_financial_ice.gov_demo.customer_transactions: gov_demo_thailand_only
+    js_financial_ice.gov_demo.payment_business_summary: gov_demo_thailand_only
+
+# gov_data_admin: no row filter (all rows, all countries)
+# gov_business_analyst: no SELECT grant on the protected table; the summary
+#   view is aggregate-only by design.
+# gov_auditor: no SELECT grants on business data.

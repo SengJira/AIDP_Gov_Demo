@@ -1,0 +1,171 @@
+timestamp,user,enabled_roles,operation,entity_kind,entity,what_changed,affected_role
+2026-09-17T15:43:54.643102Z,dv-admin,sysadmin,Create,Row filter,js_financial_ice.gov_demo.payment_business_summary,Add row filter with expression 'gov_demo_thailand_only',gov_thailand_analyst
+2026-09-17T15:43:54.599887Z,dv-admin,sysadmin,Create,Row filter,js_financial_ice.gov_demo.customer_transactions,Add row filter with expression 'gov_demo_thailand_only',gov_thailand_analyst
+2026-09-17T15:43:54.564433Z,dv-admin,sysadmin,Create,Row filter,js_financial_ice.gov_demo.customer_transactions,Add row filter with expression 'gov_demo_fraud_only',gov_fraud_analyst
+2026-09-17T15:43:54.528953Z,dv-admin,sysadmin,Create,Row filter expression,transaction_status = 'APPROVED',Add expression 'gov_demo_approved_only',
+2026-09-17T15:43:54.494204Z,dv-admin,sysadmin,Create,Row filter expression,country_code = 'TH',Add expression 'gov_demo_thailand_only',
+2026-09-17T15:43:54.460031Z,dv-admin,sysadmin,Create,Row filter expression,"COALESCE(fraud_flag, false) OR COALESCE(risk_score, 0) >= 0.70",Add expression 'gov_demo_fraud_only',
+2026-09-17T15:43:54.049592Z,dv-admin,sysadmin,Delete,Row filter expression,transaction_status IS DISTINCT FROM 'APPROVED',Delete expression 'gov_demo_approved_only',
+2026-09-17T15:43:54.014113Z,dv-admin,sysadmin,Delete,Row filter expression,"NOT (COALESCE(fraud_flag, false) OR COALESCE(risk_score, 0) >= 0.70)",Delete expression 'gov_demo_fraud_only',
+2026-09-17T15:43:53.979602Z,dv-admin,sysadmin,Delete,Row filter expression,country_code IS DISTINCT FROM 'TH',Delete expression 'gov_demo_thailand_only',
+2026-09-17T15:43:53.910472Z,dv-admin,sysadmin,Delete,Row filter,js_financial_ice.gov_demo.customer_transactions,Delete row filter with expression '2',gov_thailand_analyst
+2026-09-17T15:43:53.875023Z,dv-admin,sysadmin,Delete,Row filter,js_financial_ice.gov_demo.payment_business_summary,Delete row filter with expression '2',gov_thailand_analyst
+2026-09-17T15:43:53.807810Z,dv-admin,sysadmin,Delete,Row filter,js_financial_ice.gov_demo.customer_transactions,Delete row filter with expression '1',gov_fraud_analyst
+2026-09-17T15:43:12.806686Z,dv-admin,sysadmin,Create,Column mask,js_financial_ice.gov_demo.customer_transactions.account_id,Add column mask with expression 'gov_demo_mask_account_partial',gov_thailand_analyst
+2026-09-17T15:43:12.772550Z,dv-admin,sysadmin,Create,Column mask,js_financial_ice.gov_demo.customer_transactions.email,Add column mask with expression 'gov_demo_mask_email_full',gov_thailand_analyst
+2026-09-17T15:43:12.736802Z,dv-admin,sysadmin,Create,Column mask,js_financial_ice.gov_demo.customer_transactions.mobile_number,Add column mask with expression 'gov_demo_mask_mobile_full',gov_thailand_analyst
+2026-09-17T15:43:12.701308Z,dv-admin,sysadmin,Create,Column mask,js_financial_ice.gov_demo.customer_transactions.national_id,Add column mask with expression 'gov_demo_mask_full_string',gov_thailand_analyst
+2026-09-17T15:43:12.660156Z,dv-admin,sysadmin,Create,Column mask,js_financial_ice.gov_demo.customer_transactions.customer_name,Add column mask with expression 'gov_demo_mask_name_full',gov_thailand_analyst
+2026-09-17T15:43:12.625464Z,dv-admin,sysadmin,Create,Column mask,js_financial_ice.gov_demo.customer_transactions.customer_name,Add column mask with expression 'gov_demo_mask_name_partial',gov_fraud_analyst
+2026-09-17T15:43:12.591149Z,dv-admin,sysadmin,Create,Column mask,js_financial_ice.gov_demo.customer_transactions.email,Add column mask with expression 'gov_demo_mask_email_partial',gov_fraud_analyst
+2026-09-17T15:43:12.556125Z,dv-admin,sysadmin,Create,Column mask,js_financial_ice.gov_demo.customer_transactions.mobile_number,Add column mask with expression 'gov_demo_mask_mobile_partial',gov_fraud_analyst
+2026-09-17T15:43:12.519026Z,dv-admin,sysadmin,Create,Column mask,js_financial_ice.gov_demo.customer_transactions.national_id,Add column mask with expression 'gov_demo_mask_nid_partial',gov_fraud_analyst
+2026-09-17T15:43:12.481825Z,dv-admin,sysadmin,Create,Column mask expression,"CASE
+  WHEN ""@column"" IS NULL THEN NULL
+  WHEN length(""@column"") <= 4 THEN array_join(repeat('*', length(""@column"")), '')
+  ELSE array_join(repeat('*', lengt...",Add expression 'gov_demo_mask_account_partial',
+2026-09-17T15:43:12.446599Z,dv-admin,sysadmin,Create,Column mask expression,"CASE WHEN ""@column"" IS NULL THEN NULL ELSE 'Protected Customer' END",Add expression 'gov_demo_mask_name_full',
+2026-09-17T15:43:12.408727Z,dv-admin,sysadmin,Create,Column mask expression,"CASE WHEN ""@column"" IS NULL THEN NULL ELSE 'hidden@example.com' END",Add expression 'gov_demo_mask_email_full',
+2026-09-17T15:43:12.372948Z,dv-admin,sysadmin,Create,Column mask expression,"CASE WHEN ""@column"" IS NULL THEN NULL ELSE '**********' END",Add expression 'gov_demo_mask_mobile_full',
+2026-09-17T15:43:12.334523Z,dv-admin,sysadmin,Create,Column mask expression,"CASE WHEN ""@column"" IS NULL THEN NULL
+     ELSE array_join(repeat('*', length(""@column"")), '') END",Add expression 'gov_demo_mask_full_string',
+2026-09-17T15:43:12.299953Z,dv-admin,sysadmin,Create,Column mask expression,"CASE
+  WHEN ""@column"" IS NULL THEN NULL
+  WHEN strpos(""@column"", ' ') > 0
+    THEN substr(""@column"", 1, strpos(""@column"", ' ') - 1)
+         || ' ' || substr...",Add expression 'gov_demo_mask_name_partial',
+2026-09-17T15:43:12.264526Z,dv-admin,sysadmin,Create,Column mask expression,"CASE
+  WHEN ""@column"" IS NULL THEN NULL
+  WHEN strpos(""@column"", '@') > 1
+    THEN substr(""@column"", 1, 1) || '******' || substr(""@column"", strpos(""@column"",...",Add expression 'gov_demo_mask_email_partial',
+2026-09-17T15:43:12.229043Z,dv-admin,sysadmin,Create,Column mask expression,"CASE
+  WHEN ""@column"" IS NULL THEN NULL
+  WHEN length(""@column"") <= 4 THEN array_join(repeat('*', length(""@column"")), '')
+  ELSE array_join(repeat('*', lengt...",Add expression 'gov_demo_mask_mobile_partial',
+2026-09-17T15:43:12.194538Z,dv-admin,sysadmin,Create,Column mask expression,"CASE
+  WHEN ""@column"" IS NULL THEN NULL
+  WHEN length(""@column"") <= 4 THEN array_join(repeat('*', length(""@column"")), '')
+  ELSE array_join(repeat('*', lengt...",Add expression 'gov_demo_mask_nid_partial',
+2026-09-17T15:43:11.771539Z,dv-admin,sysadmin,Delete,Column mask expression,"CASE
+  WHEN ""@column"" IS NULL THEN NULL
+  WHEN length(""@column"") <= 4 THEN repeat('*', length(""@column""))
+  ELSE repeat('*', length(""@column"") - 4) || substr...",Delete expression 'gov_demo_mask_account_partial',
+2026-09-17T15:43:11.735918Z,dv-admin,sysadmin,Delete,Column mask expression,"CASE WHEN ""@column"" IS NULL THEN NULL ELSE 'hidden@example.com' END",Delete expression 'gov_demo_mask_email_full',
+2026-09-17T15:43:11.697581Z,dv-admin,sysadmin,Delete,Column mask expression,"CASE
+  WHEN ""@column"" IS NULL THEN NULL
+  WHEN strpos(""@column"", '@') > 1
+    THEN substr(""@column"", 1, 1) || '******' || substr(""@column"", strpos(""@column"",...",Delete expression 'gov_demo_mask_email_partial',
+2026-09-17T15:43:11.649784Z,dv-admin,sysadmin,Delete,Column mask expression,"CASE WHEN ""@column"" IS NULL THEN NULL ELSE repeat('*', length(""@column"")) END",Delete expression 'gov_demo_mask_full_string',
+2026-09-17T15:43:11.615681Z,dv-admin,sysadmin,Delete,Column mask expression,"CASE WHEN ""@column"" IS NULL THEN NULL ELSE '**********' END",Delete expression 'gov_demo_mask_mobile_full',
+2026-09-17T15:43:11.581113Z,dv-admin,sysadmin,Delete,Column mask expression,"CASE
+  WHEN ""@column"" IS NULL THEN NULL
+  WHEN length(""@column"") <= 4 THEN repeat('*', length(""@column""))
+  ELSE repeat('*', length(""@column"") - 4) || substr...",Delete expression 'gov_demo_mask_mobile_partial',
+2026-09-17T15:43:11.546221Z,dv-admin,sysadmin,Delete,Column mask expression,"CASE WHEN ""@column"" IS NULL THEN NULL ELSE 'Protected Customer' END",Delete expression 'gov_demo_mask_name_full',
+2026-09-17T15:43:11.511420Z,dv-admin,sysadmin,Delete,Column mask expression,"CASE
+  WHEN ""@column"" IS NULL THEN NULL
+  WHEN ""@column"" ~ '^\S+\s+\S' THEN regexp_replace(""@column"", '^(\S+)\s+(\S).*', '$1 $2******')
+  ELSE ""@column"" || '...",Delete expression 'gov_demo_mask_name_partial',
+2026-09-17T15:43:11.475818Z,dv-admin,sysadmin,Delete,Column mask expression,"CASE
+  WHEN ""@column"" IS NULL THEN NULL
+  WHEN length(""@column"") <= 4 THEN repeat('*', length(""@column""))
+  ELSE repeat('*', length(""@column"") - 4) || substr...",Delete expression 'gov_demo_mask_nid_partial',
+2026-09-17T15:43:11.154789Z,dv-admin,sysadmin,Delete,Column mask,js_financial_ice.gov_demo.customer_transactions.customer_name,Delete column mask with expression '14',gov_thailand_analyst
+2026-09-17T15:43:11.118474Z,dv-admin,sysadmin,Delete,Column mask,js_financial_ice.gov_demo.customer_transactions.national_id,Delete column mask with expression '11',gov_thailand_analyst
+2026-09-17T15:43:11.083535Z,dv-admin,sysadmin,Delete,Column mask,js_financial_ice.gov_demo.customer_transactions.mobile_number,Delete column mask with expression '12',gov_thailand_analyst
+2026-09-17T15:43:11.049377Z,dv-admin,sysadmin,Delete,Column mask,js_financial_ice.gov_demo.customer_transactions.email,Delete column mask with expression '13',gov_thailand_analyst
+2026-09-17T15:43:11.014941Z,dv-admin,sysadmin,Delete,Column mask,js_financial_ice.gov_demo.customer_transactions.account_id,Delete column mask with expression '15',gov_thailand_analyst
+2026-09-17T15:43:10.912375Z,dv-admin,sysadmin,Delete,Column mask,js_financial_ice.gov_demo.customer_transactions.national_id,Delete column mask with expression '7',gov_fraud_analyst
+2026-09-17T15:43:10.877521Z,dv-admin,sysadmin,Delete,Column mask,js_financial_ice.gov_demo.customer_transactions.mobile_number,Delete column mask with expression '8',gov_fraud_analyst
+2026-09-17T15:43:10.836807Z,dv-admin,sysadmin,Delete,Column mask,js_financial_ice.gov_demo.customer_transactions.email,Delete column mask with expression '9',gov_fraud_analyst
+2026-09-17T15:43:10.800551Z,dv-admin,sysadmin,Delete,Column mask,js_financial_ice.gov_demo.customer_transactions.customer_name,Delete column mask with expression '10',gov_fraud_analyst
+2026-09-17T15:42:20.508325Z,dv-admin,sysadmin,Create,Row filter,js_financial_ice.gov_demo.payment_business_summary,Add row filter with expression '2',gov_thailand_analyst
+2026-09-17T15:42:20.474520Z,dv-admin,sysadmin,Create,Row filter,js_financial_ice.gov_demo.customer_transactions,Add row filter with expression '2',gov_thailand_analyst
+2026-09-17T15:42:20.439681Z,dv-admin,sysadmin,Create,Row filter,js_financial_ice.gov_demo.customer_transactions,Add row filter with expression '1',gov_fraud_analyst
+2026-09-17T15:42:20.401632Z,dv-admin,sysadmin,Create,Row filter expression,transaction_status IS DISTINCT FROM 'APPROVED',Add expression 'gov_demo_approved_only',
+2026-09-17T15:42:20.366938Z,dv-admin,sysadmin,Create,Row filter expression,country_code IS DISTINCT FROM 'TH',Add expression 'gov_demo_thailand_only',
+2026-09-17T15:42:20.332520Z,dv-admin,sysadmin,Create,Row filter expression,"NOT (COALESCE(fraud_flag, false) OR COALESCE(risk_score, 0) >= 0.70)",Add expression 'gov_demo_fraud_only',
+2026-09-17T15:42:17.368515Z,dv-admin,sysadmin,Create,Column mask,js_financial_ice.gov_demo.customer_transactions.account_id,Add column mask with expression '15',gov_thailand_analyst
+2026-09-17T15:42:17.333654Z,dv-admin,sysadmin,Create,Column mask,js_financial_ice.gov_demo.customer_transactions.email,Add column mask with expression '13',gov_thailand_analyst
+2026-09-17T15:42:17.299436Z,dv-admin,sysadmin,Create,Column mask,js_financial_ice.gov_demo.customer_transactions.mobile_number,Add column mask with expression '12',gov_thailand_analyst
+2026-09-17T15:42:17.265321Z,dv-admin,sysadmin,Create,Column mask,js_financial_ice.gov_demo.customer_transactions.national_id,Add column mask with expression '11',gov_thailand_analyst
+2026-09-17T15:42:17.231418Z,dv-admin,sysadmin,Create,Column mask,js_financial_ice.gov_demo.customer_transactions.customer_name,Add column mask with expression '14',gov_thailand_analyst
+2026-09-17T15:42:17.196848Z,dv-admin,sysadmin,Create,Column mask,js_financial_ice.gov_demo.customer_transactions.customer_name,Add column mask with expression '10',gov_fraud_analyst
+2026-09-17T15:42:17.162139Z,dv-admin,sysadmin,Create,Column mask,js_financial_ice.gov_demo.customer_transactions.email,Add column mask with expression '9',gov_fraud_analyst
+2026-09-17T15:42:17.126558Z,dv-admin,sysadmin,Create,Column mask,js_financial_ice.gov_demo.customer_transactions.mobile_number,Add column mask with expression '8',gov_fraud_analyst
+2026-09-17T15:42:17.086609Z,dv-admin,sysadmin,Create,Column mask,js_financial_ice.gov_demo.customer_transactions.national_id,Add column mask with expression '7',gov_fraud_analyst
+2026-09-17T15:42:17.044025Z,dv-admin,sysadmin,Create,Column mask expression,"CASE
+  WHEN ""@column"" IS NULL THEN NULL
+  WHEN length(""@column"") <= 4 THEN repeat('*', length(""@column""))
+  ELSE repeat('*', length(""@column"") - 4) || substr...",Add expression 'gov_demo_mask_account_partial',
+2026-09-17T15:42:17.008852Z,dv-admin,sysadmin,Create,Column mask expression,"CASE WHEN ""@column"" IS NULL THEN NULL ELSE 'Protected Customer' END",Add expression 'gov_demo_mask_name_full',
+2026-09-17T15:42:16.971998Z,dv-admin,sysadmin,Create,Column mask expression,"CASE WHEN ""@column"" IS NULL THEN NULL ELSE 'hidden@example.com' END",Add expression 'gov_demo_mask_email_full',
+2026-09-17T15:42:16.926175Z,dv-admin,sysadmin,Create,Column mask expression,"CASE WHEN ""@column"" IS NULL THEN NULL ELSE '**********' END",Add expression 'gov_demo_mask_mobile_full',
+2026-09-17T15:42:16.892295Z,dv-admin,sysadmin,Create,Column mask expression,"CASE WHEN ""@column"" IS NULL THEN NULL ELSE repeat('*', length(""@column"")) END",Add expression 'gov_demo_mask_full_string',
+2026-09-17T15:42:16.857011Z,dv-admin,sysadmin,Create,Column mask expression,"CASE
+  WHEN ""@column"" IS NULL THEN NULL
+  WHEN ""@column"" ~ '^\S+\s+\S' THEN regexp_replace(""@column"", '^(\S+)\s+(\S).*', '$1 $2******')
+  ELSE ""@column"" || '...",Add expression 'gov_demo_mask_name_partial',
+2026-09-17T15:42:16.822380Z,dv-admin,sysadmin,Create,Column mask expression,"CASE
+  WHEN ""@column"" IS NULL THEN NULL
+  WHEN strpos(""@column"", '@') > 1
+    THEN substr(""@column"", 1, 1) || '******' || substr(""@column"", strpos(""@column"",...",Add expression 'gov_demo_mask_email_partial',
+2026-09-17T15:42:16.788027Z,dv-admin,sysadmin,Create,Column mask expression,"CASE
+  WHEN ""@column"" IS NULL THEN NULL
+  WHEN length(""@column"") <= 4 THEN repeat('*', length(""@column""))
+  ELSE repeat('*', length(""@column"") - 4) || substr...",Add expression 'gov_demo_mask_mobile_partial',
+2026-09-17T15:42:16.750138Z,dv-admin,sysadmin,Create,Column mask expression,"CASE
+  WHEN ""@column"" IS NULL THEN NULL
+  WHEN length(""@column"") <= 4 THEN repeat('*', length(""@column""))
+  ELSE repeat('*', length(""@column"") - 4) || substr...",Add expression 'gov_demo_mask_nid_partial',
+2026-09-17T15:41:41.365166Z,dv-admin,sysadmin,Assign,Group,data-auditors,Assign group to a role,gov_auditor
+2026-09-17T15:41:41.325867Z,dv-admin,sysadmin,Assign,Group,thailand-analysts,Assign group to a role,gov_thailand_analyst
+2026-09-17T15:41:41.289761Z,dv-admin,sysadmin,Assign,Group,business-analysts,Assign group to a role,gov_business_analyst
+2026-09-17T15:41:41.253759Z,dv-admin,sysadmin,Assign,Group,fraud-analysts,Assign group to a role,gov_fraud_analyst
+2026-09-17T15:41:41.218123Z,dv-admin,sysadmin,Assign,Group,governance-admins,Assign group to a role,gov_data_admin
+2026-09-17T15:41:25.179267Z,dv-admin,sysadmin,Create,Queries,,Grant show privilege,gov_auditor
+2026-09-17T15:41:25.144327Z,dv-admin,sysadmin,Create,Row filter expressions,,Grant show privilege,gov_auditor
+2026-09-17T15:41:25.110088Z,dv-admin,sysadmin,Create,Column masking expressions,,Grant show privilege,gov_auditor
+2026-09-17T15:41:25.075522Z,dv-admin,sysadmin,Create,Audit logs,,Grant show privilege,gov_auditor
+2026-09-17T15:41:25.040947Z,dv-admin,sysadmin,Create,Roles,All roles,Grant show privilege,gov_auditor
+2026-09-17T15:41:25.005747Z,dv-admin,sysadmin,Create,Tables,js_financial_ice.gov_demo.*,Grant show privilege,gov_auditor
+2026-09-17T15:41:24.971389Z,dv-admin,sysadmin,Create,Tables,js_financial_ice.gov_demo.payment_business_summary.*,Grant select privilege,gov_thailand_analyst
+2026-09-17T15:41:24.935471Z,dv-admin,sysadmin,Create,Tables,js_financial_ice.gov_demo.payment_business_summary.*,Grant show privilege,gov_thailand_analyst
+2026-09-17T15:41:24.900648Z,dv-admin,sysadmin,Create,Tables,js_financial_ice.gov_demo.customer_transactions.*,Grant select privilege,gov_thailand_analyst
+2026-09-17T15:41:24.864676Z,dv-admin,sysadmin,Create,Tables,js_financial_ice.gov_demo.customer_transactions.*,Grant show privilege,gov_thailand_analyst
+2026-09-17T15:41:24.819723Z,dv-admin,sysadmin,Create,Tables,js_financial_ice.gov_demo.payment_business_summary.*,Grant select privilege,gov_business_analyst
+2026-09-17T15:41:24.785071Z,dv-admin,sysadmin,Create,Tables,js_financial_ice.gov_demo.payment_business_summary.*,Grant show privilege,gov_business_analyst
+2026-09-17T15:41:24.751554Z,dv-admin,sysadmin,Create,Tables,js_financial_ice.gov_demo.payment_business_summary.*,Grant select privilege,gov_fraud_analyst
+2026-09-17T15:41:24.717085Z,dv-admin,sysadmin,Create,Tables,js_financial_ice.gov_demo.payment_business_summary.*,Grant show privilege,gov_fraud_analyst
+2026-09-17T15:41:24.682492Z,dv-admin,sysadmin,Create,Tables,js_financial_ice.gov_demo.customer_transactions.*,Grant select privilege,gov_fraud_analyst
+2026-09-17T15:41:24.647887Z,dv-admin,sysadmin,Create,Tables,js_financial_ice.gov_demo.customer_transactions.*,Grant show privilege,gov_fraud_analyst
+2026-09-17T15:41:24.613458Z,dv-admin,sysadmin,Create,Row filter expressions,,Grant drop privilege,gov_data_admin
+2026-09-17T15:41:24.577097Z,dv-admin,sysadmin,Create,Row filter expressions,,Grant alter privilege,gov_data_admin
+2026-09-17T15:41:24.541730Z,dv-admin,sysadmin,Create,Row filter expressions,,Grant create privilege,gov_data_admin
+2026-09-17T15:41:24.505608Z,dv-admin,sysadmin,Create,Row filter expressions,,Grant show privilege,gov_data_admin
+2026-09-17T15:41:24.469573Z,dv-admin,sysadmin,Create,Column masking expressions,,Grant drop privilege,gov_data_admin
+2026-09-17T15:41:24.433608Z,dv-admin,sysadmin,Create,Column masking expressions,,Grant alter privilege,gov_data_admin
+2026-09-17T15:41:24.397142Z,dv-admin,sysadmin,Create,Column masking expressions,,Grant create privilege,gov_data_admin
+2026-09-17T15:41:24.361544Z,dv-admin,sysadmin,Create,Column masking expressions,,Grant show privilege,gov_data_admin
+2026-09-17T15:41:24.322924Z,dv-admin,sysadmin,Create,Audit logs,,Grant show privilege,gov_data_admin
+2026-09-17T15:41:24.284508Z,dv-admin,sysadmin,Create,Roles,All roles,Grant show privilege,gov_data_admin
+2026-09-17T15:41:24.245188Z,dv-admin,sysadmin,Create,Tables,js_financial_ice.gov_demo.*,Grant drop privilege,gov_data_admin
+2026-09-17T15:41:24.209408Z,dv-admin,sysadmin,Create,Tables,js_financial_ice.gov_demo.*,Grant alter privilege,gov_data_admin
+2026-09-17T15:41:24.173880Z,dv-admin,sysadmin,Create,Tables,js_financial_ice.gov_demo.*,Grant create privilege,gov_data_admin
+2026-09-17T15:41:24.137978Z,dv-admin,sysadmin,Create,Tables,js_financial_ice.gov_demo.*,Grant delete privilege,gov_data_admin
+2026-09-17T15:41:24.102082Z,dv-admin,sysadmin,Create,Tables,js_financial_ice.gov_demo.*,Grant update privilege,gov_data_admin
+2026-09-17T15:41:24.066778Z,dv-admin,sysadmin,Create,Tables,js_financial_ice.gov_demo.*,Grant insert privilege,gov_data_admin
+2026-09-17T15:41:24.031261Z,dv-admin,sysadmin,Create,Tables,js_financial_ice.gov_demo.*,Grant select privilege,gov_data_admin
+2026-09-17T15:41:23.996704Z,dv-admin,sysadmin,Create,Tables,js_financial_ice.gov_demo.*,Grant show privilege,gov_data_admin
+2026-09-17T15:41:23.960945Z,dv-admin,sysadmin,Create,Role,gov_auditor,Created role,gov_auditor
+2026-09-17T15:41:23.925928Z,dv-admin,sysadmin,Create,Role,gov_thailand_analyst,Created role,gov_thailand_analyst
+2026-09-17T15:41:23.891128Z,dv-admin,sysadmin,Create,Role,gov_business_analyst,Created role,gov_business_analyst
+2026-09-17T15:41:23.855056Z,dv-admin,sysadmin,Create,Role,gov_fraud_analyst,Created role,gov_fraud_analyst
+2026-09-17T15:41:23.816340Z,dv-admin,sysadmin,Create,Role,gov_data_admin,Created role,gov_data_admin
+2026-09-17T15:40:52.987519Z,dv-admin,sysadmin,Delete,Tables,js_financial_ice.gov_demo.*,Revoke grant show privilege,jirawut_demo
+2026-09-17T15:40:52.948176Z,dv-admin,sysadmin,Delete,Tables,js_financial_ice.gov_demo.*,Revoke grant create privilege,jirawut_demo
+2026-09-17T15:40:43.182627Z,dv-admin,sysadmin,Create,Tables,js_financial_ice.gov_demo.*,Grant select privilege,jirawut_demo
+2026-09-17T15:40:43.142562Z,dv-admin,sysadmin,Delete,Tables,js_financial_ice.gov_demo.*,Revoke grant select privilege,jirawut_demo
+2026-09-17T15:40:28.006126Z,dv-admin,sysadmin,Create,Tables,js_financial_ice.gov_demo.*,Grant show privilege,jirawut_demo
+2026-09-17T15:40:27.968049Z,dv-admin,sysadmin,Create,Tables,js_financial_ice.gov_demo.*,Grant create privilege,jirawut_demo
+2026-09-17T15:40:27.922875Z,dv-admin,sysadmin,Create,Tables,js_financial_ice.gov_demo.*,Grant select privilege,jirawut_demo

@@ -1,0 +1,36 @@
+# Keycloak group -> BIAC role -> Keycloak user mapping.
+# Group-to-role assignments are created through the SEP BIAC REST API
+# (subject kind GROUP). SEP resolves Keycloak group membership at
+# authentication time (verified: gov users inherit roles from group
+# assignments - see reports/environment_assessment.md).
+
+mappings:
+  - keycloak_group: governance-admins
+    biac_role: gov_data_admin
+    keycloak_user: gov-admin
+
+  - keycloak_group: fraud-analysts
+    biac_role: gov_fraud_analyst
+    keycloak_user: gov-fraud
+
+  - keycloak_group: business-analysts
+    biac_role: gov_business_analyst
+    keycloak_user: gov-biz
+
+  - keycloak_group: thailand-analysts
+    biac_role: gov_thailand_analyst
+    keycloak_user: gov-tha
+
+  - keycloak_group: data-auditors
+    biac_role: gov_auditor
+    keycloak_user: gov-audit
+
+# Pre-existing scaffolding removed at setup time (documented, reversible):
+# jirawut_demo and pystarburst were assigned to ALL five demo groups,
+# which would have given every analyst full catalog access on
+# js_financial_ice and js_mysql_customer360 and defeated least privilege.
+# configure_rbac.py removes those two group assignments per group and
+# records them in the rollback file for restoration.
+scaffolding_assignments_to_remove:
+  roles: [jirawut_demo, pystarburst]
+  groups: [governance-admins, fraud-analysts, business-analysts, thailand-analysts, data-auditors]
