@@ -80,3 +80,12 @@ python scripts/reset_demo.py --apply --restore-scaffolding   # + restore pre-dem
 - [docs/demo_script.md](docs/demo_script.md) - 15-minute presenter flow
 - [docs/manual_policy_steps.md](docs/manual_policy_steps.md) - UI equivalents
 - [docs/troubleshooting.md](docs/troubleshooting.md) - known quirks + fixes
+- [docs/spark_connect.md](docs/spark_connect.md) - DDPE Spark Connect access + governance boundary
+
+## Spark / notebooks
+
+`notebooks/ddpe_spark_governance.ipynb` connects to the DDPE Spark Connect
+instance `jirawut-demo` and contrasts direct storage access (unenforced)
+with governed Trino access. Requires `scripts/start_spark_proxy.sh`
+running first on this dev host - see
+[docs/spark_connect.md](docs/spark_connect.md).

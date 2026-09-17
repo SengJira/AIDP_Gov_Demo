@@ -96,3 +96,14 @@ roles, action, entity, ALLOW/DENY) and every policy change
 (`/audit/changeLogs`). `collect_audit_evidence.py` filters these to
 demo-relevant events and writes sanitized CSVs - query text and
 credentials never appear in the API output.
+
+## Boundary: engines outside SEP (DDPE Spark Connect)
+
+BIAC enforcement is scoped to the SEP/Trino coordinator. A DDPE Spark
+Connect instance executes as the engine identity (`current_user() =
+'spark'`) and reads object storage directly - verified on the
+`jirawut-demo` instance: with valid `fs.s3a.*` credentials baked into
+the instance it would bypass all masks, row filters and grants with no
+BIAC audit trail. The instance as launched could not reach `js-demo`
+(no usable creds for that path). Keep governed access on the
+Trino/AIDP path; see [spark_connect.md](spark_connect.md).

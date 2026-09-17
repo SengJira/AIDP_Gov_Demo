@@ -1,6 +1,6 @@
 # Access test summary
 
-Run: 2026-09-17 10:46:03
+Run: 2026-09-17 10:56:11
 Result: **36/36 tests passed**
 
 | test | user | current_user | roles | object | expected | actual | pass |
